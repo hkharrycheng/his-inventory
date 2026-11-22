@@ -15,6 +15,10 @@ Harry Information System（HIS）固定資產總覽，資料源為 Feishu Base
   4. 詳情頁狀態可 **dropdown 修改** → 先寫 Feishu Base，再自動重生（patch）`data.json`（Cloudflare Worker）
   5. 每個 inventory 有 **直達連結**（`?id=<record_id>`），卡片右上 🔗 一鍵複製
   6. 圖片 `onerror` fallback（避免爛圖顯示破圖 icon）；12 個 82-byte 壞圖已用 App 身份重下載修復
+- v2026.1.02 — 第三版：
+  1. 詳情頁加 **DOCX OneDrive Link**：由 `HIS Inventory Class` 表（`tblCxfZLCRIRMNMU`）的 `OneDrive Link`／`HIS DOCX 名稱` join 每筆 inventory（129／129 有連結），顯示「文檔編號 · DOCX 名 · 章節 · 同步日」＋「📄 開啟 DOCX（OneDrive）」按鈕
+  2. HTML ICON（header logo 與 favicon）改用 **Register List 的圖標原件**（`icon.png`，file_token `ZbXAbYPyToxwVmxJDGoc2Pbknve`）
+  3. `build_data.py` 讀 `_raw/class.ndjson` 建 mapping；`build/deploy_delta.py` 只推有改動檔案（base_tree 保留其餘）
 
 ## TAB 說明
 1. **統計**
