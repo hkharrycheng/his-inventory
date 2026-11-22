@@ -66,7 +66,24 @@ for rel in rels:
         src = os.path.join(ROOT, rel)
     if os.path.exists(src):
         files.append((rel, src))
-print("delta files:", [f[0] for f in files])
+
+# 新增圖片：只推遠端還未有檔案的 images/（delta）
+head_now = call("GET", "/repos/%s/%s/git/ref/heads/main" % (login, REPO))["object"]["sha"]
+remote_paths = set()
+rt = call("GET", "/repos/%s/%s/git/trees/%s?recursive=1" % (login, REPO, head_now))
+for e in rt.get("tree", []):
+    if e["type"] == "blob":
+        remote_paths.add(e["path"])
+imgdir = os.path.join(ROOT, "images")
+new_imgs = []
+for fn in sorted(os.listdir(imgdir)):
+    rel = "images/" + fn
+    if rel not in remote_paths:
+        new_imgs.append((rel, os.path.join(imgdir, fn)))
+if new_imgs:
+    print("new images:", len(new_imgs), [r for r, _ in new_imgs])
+    files += new_imgs
+print("delta files:", [f[0] for f in files if not f[0].startswith("images/")], "+images", len(new_imgs))
 
 tree = []
 for rel, fp in files:
