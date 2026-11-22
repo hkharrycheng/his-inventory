@@ -151,7 +151,7 @@ select.st{background:var(--card);border:1px solid #3b4c63;color:var(--txt);borde
     <div class="kpis" id="kpis"></div>
     <div class="card">
       <h2>Working 系列構成</h2>
-      <p class="hint">只計 Working（177 件）；非 Working（Obsoleted／Sold／Donated／N/A）不在此圖。點擊任何一段跳到搜尋。</p>
+      <p class="hint">只計 Working（<span id="wcnt">—</span> 件）；非 Working（Obsoleted／Sold／Donated／N/A）不在此圖。點擊任何一段跳到搜尋。</p>
       <div class="pieWrap"><div id="pieBox"></div><div class="legend" id="pieLegend"></div></div>
     </div>
     <div class="card">
@@ -240,6 +240,7 @@ async function load(){
 /* ---------- stats ---------- */
 function renderStats(){
   const c = D.counts;
+  $("#wcnt").textContent = c.working;
   $("#kpis").innerHTML = `
     <div class="kpi w"><div class="n">${c.working}</div><div class="t">Working</div></div>
     <div class="kpi nw"><div class="n">${c.nonWorking}</div><div class="t">非 Working（合計）</div></div>
