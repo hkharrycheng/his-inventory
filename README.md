@@ -66,3 +66,6 @@ python -m http.server 8801
 2. `python build\fetch_app.py`（App 身份下載，必要時 `fix_bad_images.py` 補壞圖）
 3. `python build\build_data.py`（生成 `data.json`）
 4. localhost 驗證 → `python build\deploy_github.py`
+- v2026.1.03 — 補漏：
+  1. `JOMOO 廚房龍頭`（Base record `reczz28cANNcc8x2`）原 Owner 為空，被「只取 Harry／Father／Dyna」條件濾走；已在 Base 補 Owner=Harry，現時 264 件（Working 178）
+  2. 同筆 Product Shot 與 2 張實物圖（k01／k02）以 App 身份下載，>500KB 者壓到 1400px／Q82（136KB、126KB）
