@@ -8,9 +8,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "_raw")
 IMG = os.path.join(ROOT, "images")
 OUT = os.path.join(ROOT, "data.json")
-VERSION = "2026.1.00"
+VERSION = "2026.1.02"
 OWNERS = {"Harry", "Father", "Dyna"}
-FAMILIES = ["HIS", "HMS", "HFS", "HDS", "HPC"]
+FAMILIES = ["HIS", "HMS", "HFS", "HDS", "HPC", "FPC"]
+STATUSES = ["Working", "Obsoleted", "Sold", "Donated", "N/A"]
 
 
 def vals(v):
@@ -58,6 +59,29 @@ def md_link(v):
 rows = [json.loads(l) for l in open(os.path.join(RAW, "inventory.ndjson"), encoding="utf-8-sig") if l.strip()]
 keep = [r for r in rows if set(vals(r.get("Owner"))) & OWNERS]
 
+# HIS Inventory Class（每筆 inventory → 所屬 HIS DOCX 卷 + OneDrive Link）
+cls_rows = []
+cls_path = os.path.join(RAW, "class.ndjson")
+if os.path.exists(cls_path):
+    cls_rows = [json.loads(l) for l in open(cls_path, encoding="utf-8-sig") if l.strip()]
+docx_map = {}
+for c in cls_rows:
+    link_ids = []
+    for x in (c.get("HIS Inventory") or []):
+        if isinstance(x, dict) and x.get("id"):
+            link_ids.append(x["id"])
+    info = {
+        "doc": (c.get("HIS DOCX 名稱") or "").strip(),
+        "code": (c.get("文檔編號") or "").strip(),
+        "od": (c.get("OneDrive Link") or "").strip(),
+        "file": (c.get("本機檔名") or "").strip(),
+        "sync": (c.get("上次同步時間") or ""),
+    }
+    for rid in link_ids:
+        docx_map[rid] = info
+print("class rows", len(cls_rows), "mapped ids", len(docx_map))
+
+
 # 圖庫：images/<record_id>_ps<N>.<ext> / _img<N>.<ext>
 gal = {"ps": {}, "img": {}}
 for f in sorted(os.listdir(IMG)):
@@ -87,6 +111,10 @@ for r in keep:
         "docxNo": (r.get("DOCX 章節編號") or "").strip(),
         "docxTitle": one(r.get("DOCX 章節標題")),
         "docxSync": d(r.get("上次同步DOCX")),
+        "docxDoc": docx_map.get(rid, {}).get("doc", ""),
+        "docxCode": docx_map.get(rid, {}).get("code", ""),
+        "docxLink": docx_map.get(rid, {}).get("od", ""),
+        "docxFile": docx_map.get(rid, {}).get("file", ""),
         "buyDate": d(r.get("Buy Date")),
         "abandoned": d(r.get("Abandoned Date")),
         "release": d(r.get("Official Release")),
@@ -131,6 +159,15 @@ cats = sorted({c for it in items for c in it["cat"]})
 subcats = sorted({c for it in items for c in it["subcat"]})
 docx_cnt = sum(1 for it in items if it["docxNo"])
 
+# Working 內各系列（Pie/Bar 口徑）；非 Working 一律歸一類
+working_by_fam = {f: 0 for f in FAMILIES}
+for it in items:
+    if it["status"] == "Working":
+        working_by_fam[it["fam"] if it["fam"] in working_by_fam else "未標示"] = \
+            working_by_fam.get(it["fam"] if it["fam"] in working_by_fam else "未標示", 0) + 1
+non_working = sum(1 for it in items if it["status"] != "Working")
+sources = sorted({it["source"] for it in items if it["source"]})
+
 data = {
     "app": "J19 HIS Inventory",
     "version": VERSION,
@@ -142,9 +179,12 @@ data = {
         "total": len(items),
         "sourceRows": len(rows),
         "working": st_counts.get("Working", 0),
+        "nonWorking": non_working,
+        "workingByFam": working_by_fam,
         "obsoleted": st_counts.get("Obsoleted", 0),
         "status": st_counts,
         "withDocx": docx_cnt,
+        "withDocxLink": sum(1 for it in items if it["docxLink"]),
         "noDocx": len(items) - docx_cnt,
         "withPs": sum(1 for it in items if it["ps"]),
         "withPics": sum(1 for it in items if it["pics"]),
@@ -152,6 +192,8 @@ data = {
         "picFiles": sum(len(it["pics"]) for it in items),
     },
     "families": FAMILIES,
+    "statuses": STATUSES,
+    "sources": sources,
     "famStats": fam_stats,
     "famOther": fam_other,
     "cats": cats,

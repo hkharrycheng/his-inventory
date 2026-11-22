@@ -2,423 +2,587 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>HIS Inventory（J19）</title>
-<link rel="icon" href="images/favicon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="icon.png" type="image/png">
+<title>J19 HIS Inventory</title>
 <style>
 :root{
-  --bg:#0b0e14;--panel:#151a23;--panel2:#10151d;--line:#263041;--text:#e6edf5;--muted:#8b949e;
-  --accent:#58a6ff;--green:#3fb950;--red:#f85149;--amber:#f0b429;--purple:#b58cff;
+  --bg:#0b0f16; --card:#141a23; --card2:#1a2230; --line:#26303f; --txt:#e6edf6; --dim:#8b98a9;
+  --acc:#6ea8fe; --ok:#41d18c; --warn:#f0a45b; --bad:#ef6b6b;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC",sans-serif;padding-bottom:66px}
-.wrap{max-width:760px;margin:0 auto;padding:12px 12px 26px}
-.hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:4px 2px 10px}
-.brand{display:flex;align-items:center;gap:8px;min-width:0}
-.brand h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.3px}
-.badge{font-size:10.5px;border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--muted)}
-.srcbox{text-align:right;font-size:10.5px;line-height:1.7;color:var(--muted);white-space:nowrap}
-.qbar{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:9px 12px}
-.qbar .ico{color:var(--muted)}
-.qbar input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:14px}
-.frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px}
-.frow .lbl{color:var(--muted);font-size:11.5px;margin-right:2px}
-.chip{border:1px solid var(--line);background:var(--panel2);color:#c9d1d9;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;user-select:none}
-.chip.on{background:#123052;border-color:#24405c;color:#9fd0ff}
-.chip.rst{display:inline-block;margin-top:10px;color:var(--text)}
-select.sel{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:7px 9px;font-size:12.5px;max-width:100%}
-.count{color:var(--muted);font-size:12px;margin:12px 2px 8px;display:flex;justify-content:space-between}
-.sec{margin-top:16px}
-.sec h3{font-size:13.5px;margin:0 2px 9px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.sec h3 span{color:var(--muted);font-size:11px;font-weight:400}
-.card2{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:9px 10px}
-.kpi .k{color:var(--muted);font-size:10.5px;letter-spacing:.4px}
-.kpi .v{font-size:18px;font-weight:700;margin-top:2px}
-.kpi .s{color:var(--muted);font-size:10.5px}
-.charts{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
-.piebox{flex:1 1 300px;min-width:280px}
-.barbox{flex:2 1 380px;min-width:300px}
-.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--muted)}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
-.bar{display:flex;align-items:center;gap:9px;margin:9px 0}
-.bar .bl{width:38px;font-size:12.5px;font-weight:700;color:#dbe4ef;flex:0 0 auto}
-.bar .track{flex:1;height:20px;background:#0f141c;border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex}
-.bar .track i{display:block;height:100%}
-.bar .track i.w{background:var(--green)}
-.bar .track i.o{background:var(--red)}
-.bar .track i.x{background:#3a4557}
-.bar .bv{width:64px;text-align:right;font-size:11.5px;color:var(--muted);flex:0 0 auto}
-.note{color:var(--muted);font-size:11px;line-height:1.7;margin-top:8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer}
-.card .im{position:relative;width:100%;aspect-ratio:4/3;background:#111722;display:flex;align-items:center;justify-content:center}
-.card .im img{width:100%;height:100%;object-fit:contain}
-.card .im .ph{font-size:24px;color:#334155}
-.card .im .st{position:absolute;left:6px;top:6px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px rgba(11,14,20,.75)}
-.card .bd{padding:8px 9px 10px}
-.card .nm{font-size:13px;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card .mt{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
-.tg{font-size:10.5px;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:#c9d1d9}
-.tg.his{border-color:#2b4a6b;color:#9fd0ff;background:#0d1f30}
-.tg.w{border-color:rgba(63,185,80,.45);color:#7ee2a0;background:rgba(63,185,80,.10)}
-.tg.o{border-color:rgba(248,81,73,.45);color:#ff9f96;background:rgba(248,81,73,.10)}
-.tg.gray{color:var(--muted)}
-.empty{color:var(--muted);font-size:12.5px;text-align:center;padding:26px 10px;border:1px dashed var(--line);border-radius:11px}
-.ov{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;flex-direction:column}
-.ov.show{display:flex}
-.ov .bar{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0}
-.ov .bar button{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:7px 11px;font-size:12.5px;cursor:pointer}
-.ov .bar .ttl{font-size:13px;color:#dbe4ef;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ov .body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 30px}
-.ov .body .in{max-width:760px;margin:0 auto}
-.hero{display:flex;gap:12px}
-.hero .im{width:120px;height:120px;flex:0 0 auto;background:#111722;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.hero .im img{width:100%;height:100%;object-fit:contain}
-.hero .info{min-width:0}
-.hero h2{font-size:16px;margin:0 0 6px}
-.meta{color:var(--muted);font-size:11.5px;line-height:1.8}
-.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.acts a{display:inline-block;border:1px solid var(--line);border-radius:9px;padding:7px 11px;font-size:12px;color:#cfe0f2;text-decoration:none;background:var(--panel)}
-.specs{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:11px;overflow:hidden}
-.specs .mgh{padding:6px 11px;font-size:11px;letter-spacing:.8px;color:var(--muted);background:rgba(255,255,255,.035);border-bottom:1px solid var(--line)}
-.specs .r{display:flex;gap:10px;padding:7px 11px;border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px}
-.specs .r:last-child{border-bottom:0}
-.specs .k{width:132px;flex:0 0 auto;color:var(--muted)}
-.specs .v{flex:1;word-break:break-word}
-.kv{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:12.5px;line-height:1.8;color:#c9d1d9;white-space:pre-wrap;word-break:break-word}
-.galgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
-.gal{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#111722;aspect-ratio:1/1;cursor:zoom-in;position:relative}
-.gal img{width:100%;height:100%;object-fit:cover;display:block}
-.gal .zi{position:absolute;right:5px;bottom:5px;background:rgba(10,14,20,.8);border:1px solid var(--line);border-radius:7px;font-size:11px;padding:1px 5px;color:#cfd8e3}
-.galhint{color:var(--muted);font-size:11px;margin-top:7px}
-.lb{position:fixed;inset:0;z-index:60;background:rgba(4,7,12,.97);display:none;flex-direction:column}
-.lb.show{display:flex}
-.lb .lbbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;font-size:12px;color:var(--muted)}
-.lb .lbbar button{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:7px 12px;font-size:12.5px;cursor:pointer}
-.lb .lbnav{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;padding:0 10px;pointer-events:none}
-.lb .lbnav div{pointer-events:auto;width:38px;height:38px;border-radius:50%;background:rgba(21,26,35,.9);border:1px solid var(--line);color:#e6edf5;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer}
-.lb .lbwrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:0 8px 14px}
-.lb .lbwrap img{max-width:100%;max-height:100%;object-fit:contain;display:block}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(13,17,24,.96);border-top:1px solid var(--line);backdrop-filter:blur(8px)}
-.tabs .in{max-width:760px;margin:0 auto;display:flex}
-.tab{flex:1;background:0;border:0;color:var(--muted);font-size:12px;padding:9px 0 11px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
-.tab.on{color:var(--accent)}
-.tab .ti{font-size:18px;line-height:1}
-.load{padding:40px 0;text-align:center;color:var(--muted);font-size:13px}
-.err{padding:24px;text-align:center;color:var(--amber);font-size:13px;line-height:1.8}
-@media (max-width:420px){
-  .kpis{grid-template-columns:repeat(2,1fr)}
-  .hero .im{width:100px;height:100px}
-}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang HK","Microsoft JhengHei",sans-serif}
+body{max-width:760px;margin:0 auto;padding-bottom:78px;font-size:14px;line-height:1.5}
+a{color:var(--acc);text-decoration:none}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 10px;position:sticky;top:0;
+  background:linear-gradient(180deg,#0b0f16 70%,rgba(11,15,22,.86));backdrop-filter:blur(8px);z-index:20}
+.hd .left{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:38px;height:38px;border-radius:11px;background:#eef4fb;display:flex;
+  align-items:center;justify-content:center;overflow:hidden}
+.logo img{width:32px;height:32px;object-fit:contain;display:block}
+h1{margin:0;font-size:16px;font-weight:700;letter-spacing:.3px}
+.sub{margin:1px 0 0;font-size:11px;color:var(--dim)}
+.ver{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:99px;padding:3px 8px;white-space:nowrap}
+main{padding:0 14px}
+.tab{display:none}.tab.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 11px}
+.kpi .n{font-size:19px;font-weight:750;line-height:1.15}
+.kpi .t{font-size:11px;color:var(--dim);margin-top:2px}
+.kpi.w .n{color:var(--ok)}.kpi.nw .n{color:var(--warn)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:12px}
+.card h2{margin:0 0 3px;font-size:13px;font-weight:700;letter-spacing:.2px}
+.card .hint{margin:0 0 8px;font-size:11px;color:var(--dim)}
+.pieWrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+.pieWrap svg{width:190px;height:190px;flex:none}
+.pieWrap svg path{cursor:pointer;transition:opacity .15s}
+.pieWrap svg path:hover{opacity:.75}
+.pcentre{font-size:22px;font-weight:750;text-anchor:middle;fill:var(--txt)}
+.pcentre2{font-size:10px;text-anchor:middle;fill:var(--dim)}
+.legend{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1}
+.lg{display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:2px 4px;border-radius:7px}
+.lg:hover{background:var(--card2)}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.lg .v{margin-left:auto;color:var(--dim);font-variant-numeric:tabular-nums}
+.bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.brow{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:9px;cursor:pointer;padding:2px 0}
+.brow:hover .bname{color:#fff}
+.bname{font-size:12px;font-weight:650}
+.btrack{height:12px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bfill{height:100%;border-radius:99px;transition:width .3s}
+.bval{font-size:12px;color:var(--dim);text-align:right;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;margin:6px 0 10px}
+.tools input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:11px;
+  padding:9px 12px;font-size:13px;outline:none}
+.tools input:focus{border-color:#3b6fd4}
+.tools select{background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:9px 8px;font-size:12px;outline:none}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:10px 11px;margin-bottom:12px}
+.frow{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px dashed rgba(255,255,255,.05)}
+.frow:first-child{border-top:0}
+.flabel{font-size:11px;color:var(--dim);width:62px;flex:none;padding-top:5px;font-weight:650;letter-spacing:.2px}
+.flabel.sub{padding-left:8px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:0}
+.chips.scroll{max-height:104px;overflow-y:auto;padding-right:2px}
+.chip{font-size:11.5px;padding:4px 9px;border-radius:99px;border:1px solid var(--line);background:var(--card2);color:#cdd7e3;
+  cursor:pointer;white-space:nowrap;transition:.12s}
+.chip:hover{border-color:#3d4b5e}
+.chip.on{background:#20406d;border-color:#4c86d8;color:#dceaff}
+.chip .c{opacity:.6;font-size:10px;margin-left:3px}
+.chip.dis{opacity:.33;cursor:default}
+.frow .mini{margin-left:auto;font-size:11px;color:var(--dim)}
+.count{margin:2px 2px 8px;font-size:12px;color:var(--dim)}
+.count b{color:var(--txt)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
+.cd{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden;position:relative;cursor:pointer;transition:.14s}
+.cd:hover{border-color:#3b4c63;transform:translateY(-1px)}
+.cd .ph{position:relative;aspect-ratio:4/3;background:#0e141c;display:flex;align-items:center;justify-content:center}
+.cd .ph img{width:100%;height:100%;object-fit:contain;display:block}
+.cd .ph .noimg{font-size:10px;color:#5b6779}
+.cd .lnk{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:8px;background:rgba(8,12,18,.72);
+  border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:11px;color:#cfe0f5;z-index:3}
+.cd .lnk:hover{background:#20406d}
+.cd .bd{padding:8px 9px 9px}
+.cd .nm{font-size:12.5px;font-weight:650;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:34px}
+.cd .mt{margin-top:5px;display:flex;gap:4px;align-items:center;flex-wrap:wrap;font-size:10px;color:var(--dim)}
+.badge{font-size:10px;padding:1.5px 6px;border-radius:99px;border:1px solid transparent;line-height:1.5}
+.b-w{color:#8ff0b8;background:rgba(65,209,140,.13);border-color:rgba(65,209,140,.35)}
+.b-n{color:#e2b487;background:rgba(240,164,91,.12);border-color:rgba(240,164,91,.32)}
+.b-f{color:#a9c9ff;background:rgba(110,168,254,.12);border-color:rgba(110,168,254,.3)}
+.b-d{color:#b9e6a9;background:rgba(140,220,120,.1);border-color:rgba(140,220,120,.28)}
+.empty{padding:26px 10px;text-align:center;color:var(--dim);font-size:12px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;z-index:30}
+.tabbar .in{display:flex;background:rgba(20,26,35,.94);border:1px solid var(--line);border-radius:16px 16px 0 0;
+  backdrop-filter:blur(12px);width:100%;max-width:760px}
+.tb{flex:1;padding:9px 0 11px;text-align:center;font-size:12px;color:var(--dim);cursor:pointer;font-weight:650}
+.tb.on{color:#fff;background:linear-gradient(180deg,rgba(110,168,254,.14),transparent)}
+.tb .ic{display:block;font-size:15px;line-height:1.2}
+#detail{position:fixed;inset:0;background:rgba(4,7,11,.72);backdrop-filter:blur(3px);z-index:40;display:none;overflow-y:auto}
+#detail.on{display:block}
+.dsheet{max-width:760px;margin:0 auto;background:var(--bg);min-height:100%;border-top:1px solid var(--line)}
+.dtop{position:sticky;top:0;display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(11,15,22,.94);backdrop-filter:blur(8px);z-index:5}
+.dtop .x{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:15px;cursor:pointer}
+.dtop .tt{font-size:12px;color:var(--dim);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero{position:relative;background:#0e141c;display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;cursor:zoom-in}
+.hero img{max-width:100%;max-height:100%;object-fit:contain}
+.dbody{padding:12px 13px 60px}
+.dname{font-size:19px;font-weight:750;line-height:1.3;margin:0}
+.dsub{font-size:12px;color:var(--dim);margin:4px 0 10px}
+.dstats{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+select.st{background:var(--card);border:1px solid #3b4c63;color:var(--txt);border-radius:10px;padding:7px 9px;font-size:12.5px;font-weight:650}
+.dbtn{border:1px solid var(--line);background:var(--card);color:#cdd7e3;border-radius:10px;padding:7px 10px;font-size:11.5px;cursor:pointer}
+.dbtn:hover{border-color:#4c86d8;color:#dceaff}
+.note{font-size:10.5px;color:var(--dim);margin-top:6px}
+.sec{margin-top:14px}
+.sec h3{margin:0 0 7px;font-size:12px;color:#9fb3c8;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.spec{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.spec div{background:var(--card);padding:7px 9px;font-size:11.5px}
+.spec .k{color:var(--dim);font-size:10.5px;margin-bottom:1px}
+.txtbox{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px;font-size:12px;color:#c8d3e0;white-space:pre-wrap;word-break:break-word}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.thumbs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in}
+#lb{position:fixed;inset:0;background:#05080c;z-index:60;display:none;align-items:center;justify-content:center;flex-direction:column}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:88vh;object-fit:contain}
+#lb .x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:rgba(20,26,35,.8);color:#fff;font-size:16px;cursor:pointer}
+#lb .nav{position:absolute;bottom:18px;display:flex;gap:12px;align-items:center;font-size:12px;color:var(--dim)}
+#toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#1d2836;border:1px solid #3b4c63;color:#e6edf6;
+  padding:8px 13px;border-radius:11px;font-size:12px;z-index:80;opacity:0;pointer-events:none;transition:.2s;max-width:88vw;text-align:center}
+#toast.on{opacity:1}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="hdr">
-    <div class="brand">
+
+<header class="hd">
+  <div class="left">
+    <div class="logo"><img src="icon.png" alt="HIS Inventory"></div>
+    <div style="min-width:0">
       <h1>HIS Inventory</h1>
-      <span class="badge">J19</span>
+      <p class="sub" id="sub">—</p>
     </div>
-    <div class="srcbox"><div><span id="genAt">載入中…</span></div><div id="verTxt"></div></div>
-  </header>
-
-  <section id="v-stat" style="display:none">
-    <div class="kpis" id="kpis"></div>
-
-    <div class="sec">
-      <h3>HIS 資產狀態 <span>Working / Obsoleted</span></h3>
-      <div class="charts">
-        <div class="piebox card2"><div id="pie"></div></div>
-      </div>
-      <div class="note" id="pieNote"></div>
-    </div>
-
-    <div class="sec">
-      <h3>各系統系列存量 <span>Working vs Obsoleted</span></h3>
-      <div class="card2" id="bars"></div>
-      <div class="note" id="barNote"></div>
-    </div>
-  </section>
-
-  <section id="v-search" style="display:none">
-    <div class="qbar"><span class="ico">🔍</span><input id="q" type="search" placeholder="搜尋名稱、品牌、型號、規格、詳細文字"></div>
-    <div class="frow" id="fDocx"><span class="lbl">DOCX</span></div>
-    <div class="frow" id="fOwner"><span class="lbl">OWNER</span></div>
-    <div class="frow" id="fCat"><span class="lbl">類別</span></div>
-    <div class="count"><span id="cList"></span><span id="cSort"></span></div>
-    <div class="grid" id="gList"></div>
-  </section>
-
-  <div class="load" id="load">載入資料中…</div>
-</div>
-
-<nav class="tabs">
-  <div class="in">
-    <button class="tab on" data-v="stat"><span class="ti">📊</span>統計</button>
-    <button class="tab" data-v="search"><span class="ti">🔎</span>搜尋</button>
   </div>
-</nav>
+  <div class="ver" id="ver">—</div>
+</header>
 
-<div class="ov" id="ov">
-  <div class="bar"><button id="ovBack">← 返回</button><div class="ttl" id="ovTtl"></div></div>
-  <div class="body" id="ovBody"></div>
-</div>
+<main>
+  <!-- 統計 -->
+  <section class="tab on" id="tab-stats">
+    <div class="kpis" id="kpis"></div>
+    <div class="card">
+      <h2>Working 系列構成</h2>
+      <p class="hint">只計 Working（177 件）；非 Working（Obsoleted／Sold／Donated／N/A）不在此圖。點擊任何一段跳到搜尋。</p>
+      <div class="pieWrap"><div id="pieBox"></div><div class="legend" id="pieLegend"></div></div>
+    </div>
+    <div class="card">
+      <h2>Working 各系列數量</h2>
+      <p class="hint">只畫 Working；點擊橫條跳到該系列的 Working 清單。</p>
+      <div class="bars" id="barBox"></div>
+    </div>
+  </section>
 
-<div class="lb" id="lb">
-  <div class="lbbar"><button id="lbBack">← 返回</button><span id="lbCnt"></span><span style="width:66px"></span></div>
-  <div class="lbwrap"><img id="lbImg" alt=""></div>
-  <div class="lbnav"><div id="lbPrev">‹</div><div id="lbNext">›</div></div>
-</div>
+  <!-- 搜尋 -->
+  <section class="tab" id="tab-search">
+    <div class="tools">
+      <input id="q" type="search" placeholder="搜尋名稱／品牌／型號／技術…" autocomplete="off">
+      <select id="sortSel">
+        <option value="buyDesc">購買日期：新→舊</option>
+        <option value="buyAsc">購買日期：舊→新</option>
+        <option value="name">名稱 A→Z</option>
+        <option value="fam">系列</option>
+        <option value="status">狀態</option>
+      </select>
+    </div>
+
+    <div class="filters">
+      <div class="frow"><span class="flabel">狀態</span><div class="chips" id="fStatus"></div></div>
+      <div class="frow"><span class="flabel">HIS 系列</span><div class="chips" id="fFam"></div></div>
+      <div class="frow"><span class="flabel">DOCX</span><div class="chips" id="fDocx"></div></div>
+      <div class="frow"><span class="flabel sub">↳ 類別</span><div class="chips scroll" id="fCat"></div></div>
+      <div class="frow"><span class="flabel">Source</span><div class="chips" id="fSrc"></div></div>
+      <div class="frow"><span class="flabel"></span><div class="chips" style="align-items:center">
+        <button class="dbtn" id="reset">清除全部</button><span class="mini" id="count" style="margin-left:auto"></span>
+      </div></div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </section>
+</main>
+
+<nav class="tabbar"><div class="in">
+  <div class="tb on" data-tab="stats"><span class="ic">📊</span>統計</div>
+  <div class="tb" data-tab="search"><span class="ic">🔎</span>搜尋</div>
+</div></nav>
+
+<div id="detail"><div class="dsheet" id="dsheet"></div></div>
+<div id="lb"><button class="x" id="lbx">✕</button><img id="lbimg" alt=""><div class="nav" id="lbnav"></div></div>
+<div id="toast"></div>
 
 <script>
-(function(){
-  var DATA=null;
-  var ST_COLOR={'Working':'#3fb950','Obsoleted':'#f85149','Sold':'#f0b429','Donated':'#b58cff','N/A':'#5b6675','未標示':'#5b6675'};
-  var state={q:'',docx:'',owner:'',cat:''};
+const API = "https://j19-inventory.hkharrycheng.workers.dev";
+const KEY = "j19-8f2c1d9a7b";
+const FC = {HIS:"#6ea8fe",HMS:"#79d1a5",HFS:"#f0a45b",HDS:"#c58cf5",HPC:"#f2758a",FPC:"#5ad0d8"};
+const FC_UNK = "#5b6779";
 
-  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-  function stCls(s){ return s==='Working'?'w':(s==='Obsoleted'?'o':'gray'); }
+let D = null, ITEMS = [];
 
-  /* ---------- TAB 1 統計 ---------- */
-  function renderStat(){
-    var c=DATA.counts, fam=DATA.famStats, fams=DATA.families;
-    document.getElementById('kpis').innerHTML=
-      '<div class="kpi"><div class="k">總固定資產</div><div class="v">'+c.total+'</div><div class="s">Owner：'+esc(DATA.owners.join('／'))+'</div></div>'+
-      '<div class="kpi"><div class="k">Working</div><div class="v" style="color:var(--green)">'+c.working+'</div><div class="s">佔 '+pct(c.working,c.total)+'%</div></div>'+
-      '<div class="kpi"><div class="k">Obsoleted</div><div class="v" style="color:var(--red)">'+c.obsoleted+'</div><div class="s">佔 '+pct(c.obsoleted,c.total)+'%</div></div>'+
-      '<div class="kpi"><div class="k">有 DOCX 章節</div><div class="v">'+c.withDocx+'</div><div class="s">未有 '+(c.noDocx)+'</div></div>';
+const S = { status:"Working", fams:[], docx:"all", cats:[], srcs:[], q:"", sort:"buyDesc" };
 
-    drawPie();
-    document.getElementById('pieNote').innerHTML='Pie 只計 Working（'+c.working+'）與 Obsoleted（'+c.obsoleted+'）。'+
-      '另有 Sold '+(c.status.Sold||0)+'／Donated '+(c.status.Donated||0)+'／N/A '+(c.status['N/A']||0)+' 未計入圖。';
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...(typeof r==="string" ? document.querySelector(r) : r).querySelectorAll(s)];
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const famColor = f => FC[f] || FC_UNK;
+const isWorking = it => it.status === "Working";
+const statusCls = s => s==="Working" ? "b-w" : "b-n";
+const fmtDate = s => s ? s.replace(/-/g,"/") : "";
 
-    var max=0; fams.forEach(function(f){ var t=fam[f].Working+fam[f].Obsoleted+fam[f].other; if(t>max) max=t; });
-    document.getElementById('bars').innerHTML=fams.map(function(f){
-      var s=fam[f], t=s.Working+s.Obsoleted+s.other;
-      var w=(s.Working/(max||1))*100, o=(s.Obsoleted/(max||1))*100, x=(s.other/(max||1))*100;
-      return '<div class="bar"><span class="bl">'+f+'</span><span class="track">'+
-        (s.Working?'<i class="w" style="width:'+w.toFixed(2)+'%" title="Working '+s.Working+'"></i>':'')+
-        (s.Obsoleted?'<i class="o" style="width:'+o.toFixed(2)+'%" title="Obsoleted '+s.Obsoleted+'"></i>':'')+
-        (s.other?'<i class="x" style="width:'+x.toFixed(2)+'%" title="其他 '+s.other+'"></i>':'')+
-        '</span><span class="bv">'+t+' <span style="color:var(--green)">'+s.Working+'</span>/<span style="color:var(--red)">'+s.Obsoleted+'</span></span></div>';
-    }).join('')+
-    '<div class="legend"><span><i style="background:var(--green)"></i>Working</span><span><i style="background:var(--red)"></i>Obsoleted</span><span><i style="background:#3a4557"></i>其他（Sold／Donated／N/A）</span></div>';
-    var other=[];
-    Object.keys(DATA.famOther).forEach(function(k){ other.push(k+' '+DATA.famOther[k]); });
-    document.getElementById('barNote').innerHTML='只列 HIS／HMS／HFS／HDS／HPC 五個系列；'+(other.length?('另有 '+other.join('、')+' 筆未列入。'):'');
+function toast(msg, ms=2200){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("on"),ms); }
+
+/* ---------- load ---------- */
+async function load(){
+  try{
+    const r = await fetch("data.json?t=" + Date.now());
+    D = await r.json();
+    ITEMS = D.items || [];
+    $("#ver").textContent = "v" + D.version;
+    $("#sub").textContent = `Owner: Harry / Father / Dyna　·　${D.counts.total} 件　·　更新 ${D.generated}`;
+    buildFilters();
+    renderStats();
+    renderGrid();
+    const id = new URLSearchParams(location.search).get("id");
+    if(id) openDetail(id);
+  }catch(e){
+    $("#grid").innerHTML = '<div class="empty">讀取 data.json 失敗：'+esc(e.message)+'</div>';
   }
-  function pct(a,b){ return b? (a/b*100).toFixed(1) : '0.0'; }
-  function drawPie(){
-    var c=DATA.counts, w=c.working, o=c.obsoleted, total=w+o||1;
-    var a=w/total*360, cx=90, cy=90, r=72;
-    function slice(start,end,color,label,val){
-      if(end<=start) return '';
-      var large=(end-start)>180?1:0;
-      var x1=cx+r*Math.cos(Math.PI*start/180), y1=cy+r*Math.sin(Math.PI*start/180);
-      var x2=cx+r*Math.cos(Math.PI*end/180), y2=cy+r*Math.sin(Math.PI*end/180);
-      var mid=(start+end)/2, p=Math.PI*mid/180, tx=cx+r*0.6*Math.cos(p), ty=cy+r*0.6*Math.sin(p);
-      var share=val/total;
-      return '<path d="M'+cx+' '+cy+' L'+x1.toFixed(2)+' '+y1.toFixed(2)+' A'+r+' '+r+' 0 '+large+' 1 '+x2.toFixed(2)+' '+y2.toFixed(2)+' Z" fill="'+color+'" stroke="#0b0e14" stroke-width="1.5"></path>'+
-        (share>=0.08?'<text x="'+tx.toFixed(1)+'" y="'+ty.toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="700" fill="#0b1016">'+label+'</text>':'');
+}
+
+/* ---------- stats ---------- */
+function renderStats(){
+  const c = D.counts;
+  $("#kpis").innerHTML = `
+    <div class="kpi w"><div class="n">${c.working}</div><div class="t">Working</div></div>
+    <div class="kpi nw"><div class="n">${c.nonWorking}</div><div class="t">非 Working（合計）</div></div>
+    <div class="kpi"><div class="n">${c.total}</div><div class="t">總數</div></div>
+    <div class="kpi"><div class="n">${c.withDocx}</div><div class="t">有 DOCX 章節</div></div>`;
+
+  const fams = D.families || [];
+  const wbf = c.workingByFam || {};
+  const data = fams.map(f=>({f, v: wbf[f]||0, c: famColor(f)}));
+  if(wbf["未標示"]) data.push({f:"未標示", v:wbf["未標示"], c:FC_UNK});
+  const total = c.working;
+
+  // donut
+  const R=84, r0=46, cx=95, cy=95;
+  let a0 = -Math.PI/2, paths = "";
+  data.forEach((d,i)=>{
+    const frac = total ? d.v/total : 0;
+    const a1 = a0 + frac*Math.PI*2;
+    if(d.v>0 && frac>0){
+      const p = `M ${cx+R*Math.cos(a0)} ${cy+R*Math.sin(a0)} A ${R} ${R} 0 ${frac>0.5?1:0} 1 ${cx+R*Math.cos(a1)} ${cy+R*Math.sin(a1)} L ${cx+r0*Math.cos(a1)} ${cy+r0*Math.sin(a1)} A ${r0} ${r0} 0 ${frac>0.5?1:0} 0 ${cx+r0*Math.cos(a0)} ${cy+r0*Math.sin(a0)} Z`;
+      paths += `<path d="${p}" fill="${d.c}" data-fam="${esc(d.f)}"><title>${esc(d.f)}：${d.v}</title></path>`;
     }
-    var svg='<svg viewBox="0 0 180 180" width="100%" height="190" role="img" aria-label="HIS Working vs Obsoleted">'+
-      slice(0,a,'#3fb950',String(w),w)+slice(a,359.999,'#f85149',String(o),o)+
-      '<circle cx="90" cy="90" r="34" fill="#0b0e14"></circle>'+
-      '<text x="90" y="86" text-anchor="middle" font-size="10" fill="#8b949e">TOTAL</text>'+
-      '<text x="90" y="104" text-anchor="middle" font-size="16" font-weight="700" fill="#e6edf5">'+total+'</text>'+
-      '</svg>';
-    document.getElementById('pie').innerHTML=svg+
-      '<div class="legend"><span><i style="background:var(--green)"></i>Working '+w+'（'+pct(w,total)+'%）</span>'+
-      '<span><i style="background:var(--red)"></i>Obsoleted '+o+'（'+pct(o,total)+'%）</span></div>';
-  }
+    a0 = a1;
+  });
+  $("#pieBox").innerHTML = `<svg viewBox="0 0 190 190">${paths}
+    <circle cx="${cx}" cy="${cy}" r="${R+5}" fill="none" stroke="#26303f" stroke-width="1"/>
+    <text class="pcentre" x="${cx}" y="${cy+2}">${total}</text>
+    <text class="pcentre2" x="${cx}" y="${cy+18}">WORKING</text></svg>`;
+  $("#pieLegend").innerHTML = data.map(d=>{
+    const pct = total? ((d.v/total*100).toFixed(d.v/total<0.05?1:0)) : 0;
+    return `<div class="lg" data-fam="${esc(d.f)}"><span class="dot" style="background:${d.c}"></span>
+      <span>${esc(d.f)}</span><span class="v">${d.v}　${pct}%</span></div>`;
+  }).join("");
 
-  /* ---------- TAB 2 搜尋 ---------- */
-  function hay(it){
-    return [it.name,it.brand,it.model,it.tech,it.cat.join(' '),it.subcat.join(' '),it.his,it.spec,
-      it.capacity,it.resolution,it.opPower,it.powerCap,it.text,it.detailTable,it.docxTitle,it.docxNo].join(' ').toLowerCase();
+  // bars
+  const max = Math.max(1, ...data.map(d=>d.v));
+  $("#barBox").innerHTML = data.map(d=>`
+    <div class="brow" data-fam="${esc(d.f)}">
+      <div class="bname" style="color:${d.c}">${esc(d.f)}</div>
+      <div class="btrack"><div class="bfill" style="width:${(d.v/max*100).toFixed(1)}%;background:${d.c}"></div></div>
+      <div class="bval">${d.v}</div>
+    </div>`).join("");
+
+  $$("[data-fam]","#pieBox").forEach(el=>el.onclick=()=>jumpFam(el.dataset.fam));
+  $$("[data-fam]","#pieLegend").forEach(el=>el.onclick=()=>jumpFam(el.dataset.fam));
+  $$("[data-fam]","#barBox").forEach(el=>el.onclick=()=>jumpFam(el.dataset.fam));
+}
+
+function jumpFam(f){
+  if(f==="未標示"){ S.fams=[]; } else { S.fams=[f]; }
+  S.status = "Working"; S.cats=[]; S.srcs=[]; S.docx="all"; S.q="";
+  $("#q").value="";
+  buildFilters(); renderGrid(); switchTab("search");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- filters ---------- */
+function buildFilters(){
+  const fams = D.families || [];
+  const wbf = D.counts.workingByFam || {};
+
+  // 狀態：Working / 非 Working / 全部
+  const nW = D.counts.working, nN = D.counts.nonWorking;
+  $("#fStatus").innerHTML = [
+    ["Working",`Working<span class="c">${nW}</span>`],
+    ["non",`非 Working<span class="c">${nN}</span>`],
+    ["all",`全部<span class="c">${D.counts.total}</span>`],
+  ].map(([k,t])=>`<button class="chip ${S.status===k?"on":""}" data-k="${k}">${t}</button>`).join("");
+  $$("#fStatus .chip").forEach(b=>b.onclick=()=>{S.status=b.dataset.k;buildFilters();renderGrid();});
+
+  // 系列
+  $("#fFam").innerHTML = fams.map(f=>{
+    const all = ITEMS.filter(it=>it.fam===f).length;
+    return `<button class="chip ${S.fams.includes(f)?"on":""}" data-f="${f}">${f}<span class="c">${all}</span></button>`;
+  }).join("");
+  $$("#fFam .chip").forEach(b=>b.onclick=()=>{
+    const f=b.dataset.f;
+    S.fams = S.fams.includes(f)? S.fams.filter(x=>x!==f) : [...S.fams,f];
+    buildFilters(); renderGrid();
+  });
+
+  // DOCX
+  const nd = D.counts.noDocx;
+  $("#fDocx").innerHTML = [
+    ["all",`全部`],["yes","有 DOCX"],["no","未有 DOCX"]
+  ].map(([k,t])=>`<button class="chip ${S.docx===k?"on":""}" data-k="${k}">${t}${k==="no"?`<span class="c">${nd}</span>`:k==="yes"?`<span class="c">${D.counts.withDocx}</span>`:""}</button>`).join("");
+  $$("#fDocx .chip").forEach(b=>b.onclick=()=>{S.docx=b.dataset.k;S.cats=[];buildFilters();renderGrid();});
+
+  // 類別（父 = DOCX，收窄後才列）
+  const base = ITEMS.filter(it=>docxOk(it) && famOk(it));
+  const catCount = {};
+  base.forEach(it=>it.cat.forEach(c=>catCount[c]=(catCount[c]||0)+1));
+  const catList = Object.keys(catCount).sort((a,b)=>catCount[b]-catCount[a] || a.localeCompare(b,"zh-Hant"));
+  S.cats = S.cats.filter(c=>catCount[c]);
+  $("#fCat").innerHTML = catList.map(c=>
+    `<button class="chip ${S.cats.includes(c)?"on":""}" data-c="${esc(c)}">${esc(c)}<span class="c">${catCount[c]}</span></button>`
+  ).join("") || '<span class="mini">（沒有符合的類別）</span>';
+  $$("#fCat .chip").forEach(b=>b.onclick=()=>{
+    const c=b.dataset.c;
+    S.cats = S.cats.includes(c)? S.cats.filter(x=>x!==c) : [...S.cats,c];
+    buildFilters(); renderGrid();
+  });
+
+  // Source
+  const srcCount = {};
+  base.forEach(it=>{ if(it.source) srcCount[it.source]=(srcCount[it.source]||0)+1; });
+  const srcList = Object.keys(srcCount).sort((a,b)=>srcCount[b]-srcCount[a]);
+  S.srcs = S.srcs.filter(s=>srcCount[s]);
+  $("#fSrc").innerHTML = srcList.map(s=>
+    `<button class="chip ${S.srcs.includes(s)?"on":""}" data-s="${esc(s)}">${esc(s)}<span class="c">${srcCount[s]}</span></button>`
+  ).join("") || '<span class="mini">（沒有符合的來源）</span>';
+  $$("#fSrc .chip").forEach(b=>b.onclick=()=>{
+    const s=b.dataset.s;
+    S.srcs = S.srcs.includes(s)? S.srcs.filter(x=>x!==s) : [...S.srcs,s];
+    buildFilters(); renderGrid();
+  });
+}
+
+function statusOk(it){
+  if(S.status==="all") return true;
+  if(S.status==="non") return !isWorking(it);
+  return isWorking(it);
+}
+function famOk(it){ return !S.fams.length || S.fams.includes(it.fam); }
+function docxOk(it){ return S.docx==="all" || (S.docx==="yes" ? !!it.docxNo : !it.docxNo); }
+
+function filtered(){
+  const q = S.q.trim().toLowerCase();
+  let list = ITEMS.filter(it=>statusOk(it) && famOk(it) && docxOk(it));
+  if(S.cats.length) list = list.filter(it=>it.cat.some(c=>S.cats.includes(c)));
+  if(S.srcs.length) list = list.filter(it=>S.srcs.includes(it.source));
+  if(q){
+    list = list.filter(it=>[it.name,it.brand,it.model,it.tech,it.his,it.cat.join(" "),it.subcat.join(" "),it.docxTitle]
+      .join(" ").toLowerCase().includes(q));
   }
-  function filtered(){
-    var q=state.q.toLowerCase();
-    return DATA.items.filter(function(it){
-      if(state.docx==='yes' && !it.docxNo) return false;
-      if(state.docx==='no' && it.docxNo) return false;
-      if(state.owner && it.owner.indexOf(state.owner)<0) return false;
-      if(state.cat && it.cat.indexOf(state.cat)<0) return false;
-      if(!q) return true;
-      return hay(it).indexOf(q)>=0;
+  const byDate = (a,b)=>{
+    const x=a.buyDate||"", y=b.buyDate||"";
+    if(!x && !y) return (a.name||"").localeCompare(b.name||"","zh-Hant");
+    if(!x) return 1; if(!y) return -1;
+    return S.sort==="buyDesc" ? (x<y?1:x>y?-1:0) : (x<y?-1:x>y?1:0);
+  };
+  if(S.sort==="buyDesc"||S.sort==="buyAsc") list.sort(byDate);
+  else if(S.sort==="name") list.sort((a,b)=>(a.name||"").localeCompare(b.name||"","zh-Hant"));
+  else if(S.sort==="fam") list.sort((a,b)=>(a.fam||"zz").localeCompare(b.fam||"zz") || byDate(a,b));
+  else if(S.sort==="status") list.sort((a,b)=>(a.status||"zz").localeCompare(b.status||"zz") || byDate(a,b));
+  return list;
+}
+
+/* ---------- grid ---------- */
+function renderGrid(){
+  const list = filtered();
+  $("#count").innerHTML = `顯示 <b>${list.length}</b> / ${D.counts.total}`;
+  if(!list.length){ $("#grid").innerHTML = '<div class="empty">冇符合嘅項目，試下放寬 filter。</div>'; return; }
+  $("#grid").innerHTML = list.map(it=>{
+    const img = it.ps && it.ps[0];
+    const extra = it.ps && it.ps.length>1 ? `<span>＋${it.ps.length-1}</span>` : "";
+    const meta = [
+      `<span class="badge ${statusCls(it.status)}">${esc(it.status||"—")}</span>`,
+      it.fam?`<span class="badge b-f" style="color:${famColor(it.fam)};border-color:${famColor(it.fam)}55;background:${famColor(it.fam)}18">${esc(it.fam)}</span>`:"",
+      it.docxNo?`<span class="badge b-d">DOCX ${esc(it.docxNo)}</span>`:"",
+      it.buyDate?`<span>${fmtDate(it.buyDate)}</span>`:"",
+    ].join("");
+    return `<div class="cd" data-id="${it.id}">
+      <div class="ph">${ img
+        ? `<img src="${esc(img)}" alt="${esc(it.name)}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=&quot;noimg&quot;>圖片未能載入</div>'">`
+        : `<div class="noimg">無圖</div>`}
+        <div class="lnk" data-link="${it.id}" title="複製此項目的直達連結">🔗</div>
+      </div>
+      <div class="bd">
+        <div class="nm">${esc(it.name)}</div>
+        <div class="mt">${meta}${extra}</div>
+      </div>
+    </div>`;
+  }).join("");
+  $$("#grid .cd").forEach(el=>el.onclick=e=>{
+    if(e.target.closest("[data-link]")){ e.stopPropagation(); copyItemLink(el.dataset.id); return; }
+    openDetail(el.dataset.id);
+  });
+}
+
+function copyItemLink(id){
+  const url = location.origin + location.pathname + "?id=" + id;
+  const done = ()=>toast("已複製直達連結");
+  if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(done,()=>fallback());
+  else fallback();
+  function fallback(){
+    const t=document.createElement("textarea"); t.value=url; document.body.appendChild(t); t.select();
+    try{document.execCommand("copy"); done();}catch(e){ toast("複製失敗：" + url); }
+    t.remove();
+  }
+}
+
+/* ---------- detail ---------- */
+function openDetail(id){
+  const it = ITEMS.find(x=>x.id===id);
+  if(!it){ toast("找不到該項目"); return; }
+  const rows = [
+    ["品牌", it.brand],["型號", it.model],["HIS", it.his],["技術分類", it.tech],
+    ["類別", it.cat.join(" / ")],["子類別", it.subcat.join(" / ")],["Owner", it.owner.join(" / ")],
+    ["購買日期", fmtDate(it.buyDate)],["停用日期", fmtDate(it.abandoned)],["官方推出", fmtDate(it.release)],
+    ["購買價", it.price!=null&&it.price!==""?`HK$ ${it.price}`:""],
+    ["售出價", it.sellPrice!=null&&it.sellPrice!==""?`HK$ ${it.sellPrice}`:""],
+    ["保固", it.warranty?`${it.warranty} 個月`:""],["重量", it.weight?`${it.weight} kg`:""],
+    ["容量", it.capacity],["解析度", it.resolution],
+    ["電源容量", it.powerCap],["運作功率", it.opPower],
+    ["Passmark", it.passmark],["Geekbench 單核", it.sc],["Geekbench 多核", it.mc],["Futuremark", it.futuremark],
+    ["Source", it.source],
+  ].filter(r=>r[1]!==null && r[1]!==undefined && String(r[1]).trim()!=="");
+  const statuses = (D.statuses||["Working","Obsoleted","Sold","Donated","N/A"]);
+
+  const linkRow = [
+    it.manual && it.manual.u ? `<a class="dbtn" href="${esc(it.manual.u)}" target="_blank" rel="noopener">📘 手冊${it.manual.t?`：${esc(it.manual.t)}`:""}</a>`:"",
+    it.productLink && it.productLink.u ? `<a class="dbtn" href="${esc(it.productLink.u)}" target="_blank" rel="noopener">🔗 Product Link</a>`:"",
+    it.onlineShop ? `<a class="dbtn" href="${esc(it.onlineShop)}" target="_blank" rel="noopener">🛒 Online Shop</a>`:"",
+    `<a class="dbtn" href="https://feishu.doubao.com/base/ZlzAbNty2a2ZjVsjn0Fcfjbtncc?table=tblqoEAMoheCtFhA&view=vewRz0mmFN&record=${esc(it.id)}" target="_blank" rel="noopener">📋 在 Base 開啟</a>`,
+  ].join("");
+
+  const allImgs = [...(it.ps||[]), ...(it.pics||[])];
+  const detail = `
+  <div class="dtop">
+    <button class="x" id="dclose">✕</button>
+    <div class="tt">${esc(it.name)}</div>
+    <button class="dbtn" id="dcopy">🔗 直達連結</button>
+  </div>
+  <div class="hero" id="dhero">${ it.ps && it.ps[0] ? `<img src="${esc(it.ps[0])}" alt="${esc(it.name)}" onerror="this.parentNode.innerHTML='<div class=noimg>圖片未能載入</div>'">` : '<div class="noimg">無 Product Shot</div>' }</div>
+  <div class="dbody">
+    <h2 class="dname">${esc(it.name)}</h2>
+    <div class="dsub">${[it.brand,it.model,it.his].filter(Boolean).map(esc).join(" · ")}</div>
+    <div class="dstats">
+      <select class="st" id="dstatus">${statuses.map(s=>`<option value="${esc(s)}" ${it.status===s?"selected":""}>${esc(s)}</option>`).join("")}</select>
+      ${it.fam?`<span class="badge b-f" style="color:${famColor(it.fam)};border-color:${famColor(it.fam)}55;background:${famColor(it.fam)}18">${esc(it.fam)}</span>`:""}
+      ${it.docxNo?`<span class="badge b-d">DOCX ${esc(it.docxNo)}</span>`:""}
+    </div>
+    <div class="note">改狀態會即時寫入 Feishu Base，再自動重生 data.json（GitHub Pages 約 1 分鐘後同步）。</div>
+
+    ${it.docxTitle||it.docxNo||it.docxLink?`<div class="sec"><h3>DOCX 章節</h3>
+      ${it.docxDoc?`<div class="note" style="margin:0 0 5px;color:#9fb3c8">${esc(it.docxDoc.startsWith(it.docxCode)||!it.docxCode?it.docxDoc:it.docxCode+" · "+it.docxDoc)}${it.docxSync?"　同步 "+fmtDate(it.docxSync):""}</div>`:""}
+      ${it.docxNo?`<div class="note" style="margin:0 0 4px;color:#8ff0b8">章節 ${esc(it.docxNo)}</div>`:""}
+      <div class="txtbox">${esc(it.docxTitle||"—")}</div>
+      ${it.docxLink?`<div class="dstats" style="margin-top:8px"><a class="dbtn" href="${esc(it.docxLink)}" target="_blank" rel="noopener">📄 開啟 DOCX（OneDrive）</a></div>`:""}
+      ${!it.docxLink&&it.docxNo?`<div class="note">此項未對應到 HIS Inventory Class 的 OneDrive Link。</div>`:""}
+    </div>`:""}
+
+    <div class="sec"><h3>規格</h3><div class="spec">${rows.map(([k,v])=>`<div><div class="k">${esc(k)}</div>${esc(v)}</div>`).join("")}</div></div>
+
+    ${(it.manual||it.productLink||it.onlineShop)?`<div class="sec"><h3>連結</h3><div class="dstats">${linkRow}</div></div>`:""}
+
+    ${it.spec?`<div class="sec"><h3>規格說明</h3><div class="txtbox">${esc(it.spec)}</div></div>`:""}
+    ${it.text?`<div class="sec"><h3>文字詳細</h3><div class="txtbox">${esc(it.text)}</div></div>`:""}
+    ${it.detailTable?`<div class="sec"><h3>表格詳細</h3><div class="txtbox">${esc(it.detailTable)}</div></div>`:""}
+
+    ${it.pics&&it.pics.length?`<div class="sec"><h3>實物圖（${it.pics.length}）</h3><div class="thumbs">${it.pics.map((p,i)=>`<img src="${esc(p)}" data-i="${i+ (it.ps?it.ps.length:0)}" loading="lazy" onerror="this.style.opacity=.25">`).join("")}</div></div>`:""}
+    ${it.ps&&it.ps.length>1?`<div class="sec"><h3>其他 Product Shot（${it.ps.length}）</h3><div class="thumbs">${it.ps.map((p,i)=>`<img src="${esc(p)}" data-i="${i}" loading="lazy" onerror="this.style.opacity=.25">`).join("")}</div></div>`:""}
+  </div>`;
+
+  $("#dsheet").innerHTML = detail;
+  $("#detail").classList.add("on");
+  document.body.style.overflow = "hidden";
+
+  $("#dclose").onclick = closeDetail;
+  $("#dcopy").onclick = ()=>copyItemLink(it.id);
+  $("#dstatus").onchange = e => changeStatus(it, e.target.value, e.target);
+
+  const openLb = idx => openLightbox(allImgs, idx);
+  $("#dhero").onclick = ()=> allImgs.length && openLb(0);
+  $$("#dsheet .thumbs img").forEach(img=>img.onclick=()=>openLb(+img.dataset.i));
+
+  try{ history.replaceState(null,"", location.pathname + "?id=" + it.id); }catch(e){}
+}
+
+function closeDetail(){
+  $("#detail").classList.remove("on");
+  document.body.style.overflow = "";
+  try{ history.replaceState(null,"", location.pathname); }catch(e){}
+}
+
+/* ---------- status write ---------- */
+async function changeStatus(it, status, sel){
+  const old = it.status;
+  sel.disabled = true;
+  toast("寫入 Feishu Base…", 4000);
+  try{
+    const r = await fetch(API + "/status", {
+      method:"POST",
+      headers:{ "content-type":"application/json", "x-j19-key": KEY },
+      body: JSON.stringify({ id: it.id, status })
     });
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error || j.msg || "寫入失敗");
+    it.status = status;
+    if(j.counts){ D.counts = {...D.counts, ...j.counts}; }
+    if(j.famStats) D.famStats = j.famStats;
+    renderStats();
+    const badge = $("#dsheet .badge.b-w, #dsheet .badge.b-n");
+    if(badge){ badge.className = "badge " + statusCls(status); badge.textContent = status; }
+    $("#dstatus").className = "st";
+    if(S.status!=="all" && !statusOk(it)){ closeDetail(); }
+    renderGrid();
+    toast(`已改為 ${status}：Base 已更新，data.json 同步中（約 1 分鐘）`, 3600);
+  }catch(e){
+    toast("失敗：" + e.message, 4000);
+    sel.value = old;
+  }finally{
+    sel.disabled = false;
   }
-  function renderList(){
-    var list=filtered();
-    document.getElementById('cList').textContent=list.length+' / '+DATA.counts.total+' 件';
-    document.getElementById('cSort').textContent='Product Shot '+DATA.counts.withPs+' 件 · '+(DATA.counts.psFiles||0)+' 張';
-    var g=document.getElementById('gList');
-    if(!list.length){
-      g.innerHTML='<div class="empty" style="grid-column:1/-1">此條件下沒有資產<br><span class="chip rst" data-reset="1">清除所有條件</span></div>';
-      return;
-    }
-    g.innerHTML=list.map(function(it){
-      var img=it.ps[0]||it.pics[0]||'';
-      return '<div class="card" data-item="'+it.id+'">'+
-        '<div class="im">'+(img?'<img loading="lazy" src="'+esc(img)+'" alt="">':'<span class="ph">🖥</span>')+
-        '<span class="st" style="background:'+(ST_COLOR[it.status]||'#5b6675')+'" title="'+esc(it.status||'未標示')+'"></span></div>'+
-        '<div class="bd"><div class="nm">'+esc(it.name||it.model||'未命名')+'</div>'+
-        '<div class="mt">'+esc([it.brand,it.model].filter(Boolean).join(' · ')||'—')+'</div>'+
-        '<div class="tags">'+(it.his?'<span class="tg his">'+esc(it.his)+'</span>':'')+
-        '<span class="tg '+stCls(it.status)+'">'+esc(it.status||'—')+'</span>'+
-        (it.cat.length?'<span class="tg">'+esc(it.cat[0])+'</span>':'')+'</div></div></div>';
-    }).join('');
-  }
-  function buildFilters(){
-    var d=[['','全部'],['yes','有 DOCX'],['no','未有 DOCX']];
-    document.getElementById('fDocx').innerHTML='<span class="lbl">DOCX</span>'+d.map(function(x){
-      return '<span class="chip'+(state.docx===x[0]?' on':'')+'" data-docx="'+x[0]+'">'+x[1]+'</span>';
-    }).join('');
-    var o=[''].concat(DATA.owners);
-    document.getElementById('fOwner').innerHTML='<span class="lbl">OWNER</span>'+o.map(function(x){
-      return '<span class="chip'+(state.owner===x?' on':'')+'" data-owner="'+esc(x)+'">'+(x||'全部')+'</span>';
-    }).join('');
-    var sel='<select class="sel" id="selCat"><option value="">全部類別（'+DATA.cats.length+'）</option>';
-    DATA.cats.forEach(function(c){ sel+='<option value="'+esc(c)+'"'+(state.cat===c?' selected':'')+'>'+esc(c)+'</option>'; });
-    sel+='</select>';
-    document.getElementById('fCat').innerHTML='<span class="lbl">類別</span>'+sel;
-    document.getElementById('selCat').addEventListener('change',function(e){ state.cat=e.target.value; renderList(); });
-  }
+}
 
-  /* ---------- 詳情 ---------- */
-  var galList=[], galIdx=0;
-  function openLB(i){
-    if(!galList.length) return;
-    galIdx=Math.max(0,Math.min(galList.length-1,i));
-    document.getElementById('lbImg').src=galList[galIdx];
-    document.getElementById('lbCnt').textContent=(galIdx+1)+' / '+galList.length;
-    var multi=galList.length>1;
-    document.getElementById('lbPrev').style.visibility=multi?'visible':'hidden';
-    document.getElementById('lbNext').style.visibility=multi?'visible':'hidden';
-    document.getElementById('lb').classList.add('show');
-  }
-  function closeLB(){ document.getElementById('lb').classList.remove('show'); }
-  function specRow(k,v){ return v?('<div class="r"><span class="k">'+esc(k)+'</span><span class="v">'+esc(v)+'</span></div>'):''; }
-  function openItem(id){
-    var it=DATA.items.filter(function(x){return x.id===id})[0];
-    if(!it) return;
-    var h='<div class="in"><div class="hero">'+
-      '<div class="im">'+(it.ps[0]?'<img src="'+esc(it.ps[0])+'" alt="">':'<span style="font-size:28px;color:#334155">🖥</span>')+'</div>'+
-      '<div class="info"><h2>'+esc(it.name||it.model||'未命名')+'</h2>'+
-      '<div class="tags">'+(it.his?'<span class="tg his">'+esc(it.his)+'</span>':'')+
-      '<span class="tg '+stCls(it.status)+'">'+esc(it.status||'—')+'</span>'+
-      (it.owner.length?'<span class="tg">'+esc(it.owner.join('／'))+'</span>':'')+
-      (it.cat.length?'<span class="tg">'+esc(it.cat.join('／'))+'</span>':'')+'</div>'+
-      '<div class="meta">'+esc([it.brand,it.model].filter(Boolean).join(' · '))+
-      (it.buyDate?'<br>購入 '+esc(it.buyDate):'')+
-      (it.price!=null?'<br>HK$ '+esc(it.price):'')+'</div></div></div>';
+/* ---------- lightbox ---------- */
+let LB = { list:[], i:0 };
+function openLightbox(list, i){
+  LB = { list, i };
+  $("#lbimg").src = list[i];
+  $("#lbnav").innerHTML = `<button class="dbtn" id="lprev">◀</button><span>${i+1} / ${list.length}</span><button class="dbtn" id="lnext">▶</button>`;
+  $("#lb").classList.add("on");
+  $("#lprev").onclick = e=>{e.stopPropagation(); step(-1);};
+  $("#lnext").onclick = e=>{e.stopPropagation(); step(1);};
+}
+function step(d){
+  LB.i = (LB.i + d + LB.list.length) % LB.list.length;
+  $("#lbimg").src = LB.list[LB.i];
+  $("#lbnav").querySelector("span").textContent = `${LB.i+1} / ${LB.list.length}`;
+}
+$("#lbx").onclick = ()=>$("#lb").classList.remove("on");
+$("#lb").onclick = e=>{ if(e.target.id==="lb") $("#lb").classList.remove("on"); };
 
-    var links=[];
-    if(it.manual.u) links.push('<a href="'+esc(it.manual.u)+'" target="_blank" rel="noopener">📄 手冊 PDF</a>');
-    if(it.productLink.u) links.push('<a href="'+esc(it.productLink.u)+'" target="_blank" rel="noopener">🔗 Product Link</a>');
-    if(links.length) h+='<div class="acts">'+links.join('')+'</div>';
+/* ---------- tabs ---------- */
+function switchTab(name){
+  $$(".tab").forEach(t=>t.classList.toggle("on", t.id === "tab-" + name));
+  $$(".tb").forEach(b=>b.classList.toggle("on", b.dataset.tab === name));
+  if(name==="stats") renderStats();
+  else renderGrid();
+}
+$$(".tb").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 
-    var sp=[];
-    function add(k,v){ if(v!=null && String(v).trim()!=='') sp.push([k,String(v)]); }
-    add('型號',it.model); add('品牌',it.brand); add('Technical Class',it.tech);
-    add('類別',it.cat.join('／')); add('子類別',it.subcat.join('／'));
-    add('容量',it.capacity); add('Resolution',it.resolution); add('規格',it.spec);
-    add('Power Capacity',it.powerCap); add('Operating Power',it.opPower);
-    add('重量 (kg)',it.weight!=null?it.weight+' kg':'');
-    add('保固',it.warranty!=null?it.warranty+' 個月':'');
-    add('購買價',it.price!=null?'HK$ '+it.price:'');
-    add('Selling Price',it.sellPrice!=null?'HK$ '+it.sellPrice:'');
-    add('Source',it.source); add('Online Shop',it.onlineShop);
-    add('Buy Date',it.buyDate); add('Abandoned Date',it.abandoned); add('Official Release',it.release);
-    add('Passmark',it.passmark); add('Geekbench 單核',it.sc); add('Geekbench 多核',it.mc); add('Futuremark',it.futuremark);
-    add('HIS',it.his); add('狀態',it.status); add('Owner',it.owner.join('／'));
-    add('DOCX 章節',[it.docxNo,it.docxTitle].filter(Boolean).join(' · '));
-    add('上次同步 DOCX',it.docxSync);
-    var specsHtml=sp.map(function(x){ return specRow(x[0],x[1]); }).join('');
-    h+='<div class="sec"><h3>規格 <span>'+sp.length+' 項</span></h3></div>';
-    h+='<div class="specs"><div class="mgh">Specification Columns</div>'+specsHtml+'</div>';
+$("#q").oninput = e=>{ S.q = e.target.value; renderGrid(); };
+$("#sortSel").onchange = e=>{ S.sort = e.target.value; renderGrid(); };
+$("#reset").onclick = ()=>{
+  S.status="Working"; S.fams=[]; S.docx="all"; S.cats=[]; S.srcs=[]; S.q=""; S.sort="buyDesc";
+  $("#q").value=""; $("#sortSel").value="buyDesc";
+  buildFilters(); renderGrid();
+};
 
-    if(it.text) h+='<div class="sec"><h3>文字詳細</h3><div class="kv">'+esc(it.text)+'</div></div>';
-    if(it.detailTable) h+='<div class="sec"><h3>表格詳細</h3><div class="kv">'+esc(it.detailTable)+'</div></div>';
-
-    galList=(it.ps.length?it.ps:[]).concat(it.pics);
-    if(galList.length){
-      h+='<div class="sec"><h3>圖片詳細 <span>'+galList.length+' 張</span></h3><div class="galgrid">'+
-        galList.map(function(p,i){
-          return '<div class="gal" data-gal="'+i+'"><img loading="lazy" src="'+esc(p)+'" alt=""><span class="zi">放大</span></div>';
-        }).join('')+'</div><div class="galhint">按圖放大'+(galList.length>1?'，可左右切換':'')+'（Product Shot '+(it.ps.length)+'／實物圖 '+(it.pics.length)+'）</div></div>';
-    } else {
-      h+='<div class="sec"><h3>圖片詳細</h3><div class="empty">未上傳 Product Shot／圖片</div></div>';
-    }
-    h+='</div>';
-    showOverlay(it.name||it.model||'詳情', h);
-  }
-
-  /* ---------- overlay / tabs ---------- */
-  function showOverlay(t,html){
-    document.getElementById('ovTtl').textContent=t;
-    document.getElementById('ovBody').innerHTML=html;
-    document.getElementById('ov').classList.add('show');
-    document.getElementById('ovBody').scrollTop=0;
-    document.body.style.overflow='hidden';
-  }
-  function hideOverlay(){ closeLB(); document.getElementById('ov').classList.remove('show'); document.body.style.overflow=''; }
-  document.getElementById('ovBack').addEventListener('click',hideOverlay);
-  document.getElementById('lbBack').addEventListener('click',closeLB);
-  document.getElementById('lbPrev').addEventListener('click',function(e){ e.stopPropagation(); openLB(galIdx-1); });
-  document.getElementById('lbNext').addEventListener('click',function(e){ e.stopPropagation(); openLB(galIdx+1); });
-  document.getElementById('lb').addEventListener('click',function(e){ if(e.target.id==='lb'||(e.target.className||'').indexOf('lbwrap')===0) closeLB(); });
-
-  var views={stat:'v-stat',search:'v-search'};
-  document.querySelectorAll('.tab').forEach(function(b){
-    b.addEventListener('click',function(){
-      var v=b.getAttribute('data-v');
-      document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on',x===b); });
-      Object.keys(views).forEach(function(k){ document.getElementById(views[k]).style.display=(k===v?'':'none'); });
-      window.scrollTo(0,0);
-    });
-  });
-
-  /* ---------- events ---------- */
-  var t=null;
-  document.getElementById('q').addEventListener('input',function(e){
-    clearTimeout(t); var v=e.target.value;
-    t=setTimeout(function(){ state.q=v.trim(); renderList(); },180);
-  });
-  document.addEventListener('click',function(e){
-    var rs=e.target.closest('[data-reset]');
-    if(rs){ state={q:'',docx:'',owner:'',cat:''}; document.getElementById('q').value=''; buildFilters(); renderList(); return; }
-    var dc=e.target.closest('[data-docx]');
-    if(dc){ state.docx=dc.getAttribute('data-docx'); buildFilters(); renderList(); return; }
-    var ow=e.target.closest('[data-owner]');
-    if(ow){ state.owner=ow.getAttribute('data-owner'); buildFilters(); renderList(); return; }
-    var g=e.target.closest('[data-gal]');
-    if(g && !e.target.closest('#lb')){ openLB(+g.getAttribute('data-gal')); return; }
-    var c=e.target.closest('[data-item]');
-    if(c && !e.target.closest('#lb')){ openItem(c.getAttribute('data-item')); return; }
-  });
-
-  function fail(msg){
-    document.getElementById('load').className='err';
-    document.getElementById('load').innerHTML='載入資料失敗：'+esc(msg)+'<br>請確認已執行 build\\build_data.py，並用 localhost 開啟（例如 python -m http.server 8801）。';
-  }
-  function boot(){
-    fetch('data.json?t='+Date.now()).then(function(r){ if(!r.ok) throw new Error('data.json HTTP '+r.status); return r.json(); })
-    .then(function(d){
-      DATA=d;
-      document.getElementById('load').style.display='none';
-      document.getElementById('v-stat').style.display='';
-      document.getElementById('v-search').style.display='none';
-      document.getElementById('genAt').textContent='更新 '+d.generated;
-      document.getElementById('verTxt').textContent='v'+(d.version||'');
-      renderStat(); buildFilters(); renderList();
-    }).catch(function(err){ fail(err.message||String(err)); });
-  }
-  boot();
-})();
+load();
 </script>
 </body>
 </html>
